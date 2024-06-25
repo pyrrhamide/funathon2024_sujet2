@@ -11,7 +11,9 @@ library(leaflet)
 # 1) on importe les fonctions créées dans les scripts ----
 source('R/create_data_list.R')
 source('R/import_data.R')
-source('R/plot_airport_line.R')
+source('R/figures.R')
+source('R/fonctions_diverses.R')
+source('R/tables.R')
 
 
 # 2) on importe les données ----
@@ -78,17 +80,17 @@ library(gt)
 years_list <- 2018:2022
 months_list <- 1:12
 
+# nettoyage nom aéroport
+pax_apt_all <- pax_apt_all %>% 
+  mutate(apt_nom_clean = paste0(str_to_title(apt_nom), " _(", apt, ")_"), .before = apt_nom)
+# les underscores pour que ça devienne italique dans le TDB 
+
 pax_apt_all %>% 
   filter(an == 2021, mois == 11) %>% 
   select(date, apt, apt_nom, starts_with("apt_pax_"), trafic) %>% 
   arrange(-trafic)
 # fonctions sur fonctions, incroyable 
 summary_stat_airport(pax_apt_all, 2019, 6)
-
-# nettoyage nom aéroport
-pax_apt_all <- pax_apt_all %>% 
-  mutate(apt_nom_clean = paste0(str_to_title(apt_nom), " _(", apt, ")_"), .before = apt_nom)
-# les underscores pour que ça devienne italique dans le TDB 
 
 # les beaux tableaux 
 summary_stat_airport(pax_apt_all, 2019, 6) %>% 
@@ -122,7 +124,54 @@ summary_stat_airport(pax_apt_all, 2021, 9) %>%
 # pour les marqueurs d'aéroport 
 palette <- c("green", "blue", "red")
 
-pax_apt_all %>% 
+trafic_aeroports <- pax_apt_all %>% 
   filter(an == 2022, mois == 11) %>% 
   # jointure sur coordonnées des aéroports 
-  left_join(airports_location_rec, by = join_by(apt == code_oaci))
+  left_join(airports_location_rec, by = join_by(apt == code_oaci)) %>% 
+  # nouveau apt_nom_clean, mais avec nom aéroport qu'on connait tous 
+  mutate(apt_nom_clean2 = paste0(str_to_title(apt_nom), " _(", coalesce(code_iata, apt), ")_")) %>% 
+  # classer chaque observation dans un tertile et lui donner une couleur
+  mutate(volume = ntile(trafic, n = 3),
+         couleur = palette[volume], .by = c(an, mois)) %>% 
+  # transformer en format sf
+  st_as_sf()
+
+leaflet(head(trafic_aeroports, 20)) %>% 
+  addTiles() %>% 
+  addMarkers(popup = ~str_glue("{str_to_title(apt_nom)} - {trafic} passagers"), label = ~str_to_title(apt_nom))
+# des aéroports qui n'ont pas de coordonnées
+
+trafic_aeroports %>% 
+  filter(is.na(code_iata)) %>% 
+  distinct(apt_nom_clean)
+
+
+# Aide pour l'exemple R
+icons <- awesomeIcons(
+  icon = 'plane',
+  iconColor = 'black',
+  library = 'fa',
+  markerColor = trafic_aeroports$couleur
+)
+
+trafic_aeroports %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  # colorer les pics en fonction de leur tertile
+  addAwesomeMarkers(icon = icons,
+                    popup = ~str_glue("{str_to_title(apt_nom)} - {trafic} passagers"), 
+                    label = ~str_to_title(apt_nom))
+
+# => fonction créée dans figures.R
+trafic_aeroports <- pax_apt_all %>% 
+  # jointure sur coordonnées des aéroports 
+  left_join(airports_location_rec, by = join_by(apt == code_oaci)) %>% 
+  # nouveau apt_nom_clean, mais avec nom aéroport qu'on connait tous 
+  mutate(apt_nom_clean2 = paste0(str_to_title(apt_nom), " _(", coalesce(code_iata, apt), ")_")) %>% 
+  # classer chaque observation dans un tertile et lui donner une couleur
+  mutate(volume = ntile(trafic, n = 3),
+         couleur = palette[volume], .by = c(an, mois)) %>% 
+  # transformer en format sf
+  st_as_sf()
+
+map_leaflet_airport(trafic_aeroports, 2020, 3)
