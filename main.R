@@ -81,7 +81,7 @@ month <- MONTHS_LIST[1]
 
 ## Valorisation 1: le trafic par aéroport ----
 
-figure_plotly <- plot_airport_line(trafic_aeroports, default_airport) # FMEE = RUN 
+figure_plotly <- plot_airport_line(trafic_aeroports, c(default_airport, "RUN")) # FMEE = RUN 
 
 ## Valorisation 2 : tableau HTML pour afficher des données ----
 

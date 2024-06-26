@@ -1,4 +1,4 @@
-main_color <- "#5770BE"
+main_color <- "purple"
 
 input_date <- shinyWidgets::airDatepickerInput(
   "date",
@@ -14,7 +14,7 @@ input_date <- shinyWidgets::airDatepickerInput(
 
 input_airport <- selectInput(
   "select",
-  "Aéroport choisi",
+  "Choisir un ou plusieurs aéroports",
   choices = liste_aeroports,
   selected = default_airport,
   multiple = T,
@@ -29,9 +29,11 @@ ui <- page_navbar(
   header = em("Projet issu du funathon 2024, organisé par l'Insee et la DGAC"),
   nav_panel("Trafic", layout_columns(
     card(
-      card_header("Tableau"),
+      card_header("Flux de fréquentation des aéroports français",
+                  class = c("bg-pink", "text-center", "fs-6")),
       input_date,
-      gt_output(outputId = "table")
+      gt_output(outputId = "table"),
+      card_footer(markdown("_Source_ : DGAC, à partir des données sur data.gouv.fr"))
       # textOutput("date1")
       # table viendra ici
     ),
@@ -39,11 +41,12 @@ ui <- page_navbar(
       card(
         # carte viendra ici
         # textOutput("date2")
-        card_header("Carte"), # pour ajouter un encadré titre :)
+        card_header("Localisation des aéroports français",
+                    class = c("bg-pink", "text-center", "fs-6")), # pour ajouter un encadré titre :)
         card(leafletOutput("carte")) # indique qu'une carte sera ici ?
       ),
-      card(card_header("Fréquentation d'un aéroport", 
-                       class = "bg-dark"),
+      card(card_header("Fréquentation par aéroport (trafic mensuel)", 
+                       class = c("bg-pink", "text-center", "fs-6")),
            input_airport,
            plotlyOutput("lineplot") # faut définir précisément chaque objet
            # textOutput("airport")

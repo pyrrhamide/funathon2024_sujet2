@@ -12,7 +12,7 @@ tableau_interactif <- function(tableau, ...) {
                trafic = md("**Trafic**")) %>% 
     tab_header(title = "Statistiques de fréquentation",
                subtitle = md("_Classement des aéroports_")) %>% 
-    tab_source_note(md("_Source_ : DGAC, à partir des données sur data.gouv.fr")) %>% 
+    # tab_source_note(md("_Source_ : DGAC, à partir des données sur data.gouv.fr")) %>% 
     tab_options(table.font.names = "Marianne",
                 column_labels.font.weight = "bold") %>% 
     opt_interactive(

@@ -16,7 +16,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: inseefrlab/funathon2024-sujet2
+          images: kantofia/funathon-sujet2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -35,7 +35,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ steps.docker_meta.outputs.tags }}
-            ${{ github.ref == 'refs/heads/main' && 'inseefrlab/funathon2024-sujet2:shiny-test2' || '' }}
+            ${{ github.ref == 'refs/heads/main' && 'kantofia/funathon-sujet2:shiny-test2' || '' }}
           labels: ${{ steps.docker_meta.outputs.labels }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -47,7 +47,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: inseefrlab/funathon2024-sujet2
+          images: kantofia/funathon-sujet2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -66,7 +66,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ steps.docker_meta.outputs.tags }}
-            ${{ github.ref == 'refs/heads/main' && 'inseefrlab/funathon2024-sujet2:streamlit-test2' || '' }}
+            ${{ github.ref == 'refs/heads/main' && 'kantofia/funathon-sujet2:streamlit-test2' || '' }}
           labels: ${{ steps.docker_meta.outputs.labels }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
