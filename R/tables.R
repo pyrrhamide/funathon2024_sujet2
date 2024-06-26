@@ -25,3 +25,5 @@ tableau_interactif <- function(tableau, ...) {
       use_highlight = TRUE
       )
 }
+
+
