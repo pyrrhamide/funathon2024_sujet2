@@ -27,16 +27,11 @@ map_leaflet_airport <- function(df, in_an, in_mois){
     addTiles() %>%
     # colorer les pics en fonction de leur tertile
     addAwesomeMarkers(icon = icons[],
-                      popup = ~str_glue("{str_to_title(apt_nom)} - {trafic} voyageurs"),
-                      popupOptions = popupOptions(
-                        style = list(
-                          "font-family" = "Marianne"
-                        )
-                      ),
+                      popup = ~str_glue("{str_to_title(apt_nom)} - {format_chiffres(trafic)} voyageurs ({str_sub(anmois, -2)}/{an})"),
                       label = ~str_glue("{str_to_title(apt_nom)} ({code_iata})"),
                       labelOptions = labelOptions(
                         style = list(
-                          "font-family" = "Marianne",
+                          # "font-family" = "Lato",
                           "font-size" = "12px"
                         )
                       ))

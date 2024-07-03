@@ -22,6 +22,7 @@ source('R/import_data.R')
 source('R/figures.R')
 source('R/fonctions_diverses.R')
 source('R/tables.R')
+source('R/format_chiffres.R')
 
 
 # 2) on importe les données ----
