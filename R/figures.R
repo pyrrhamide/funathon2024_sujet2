@@ -5,7 +5,8 @@ plot_airport_line <- function(df, selected_airport) {
     plot_ly(x = ~date, y = ~trafic, color = ~code_iata,
             text = ~apt_nom, 
             hovertemplate = paste("<i>Aéroport:</i> %{text}<br>Trafic: %{y}") ,
-            type = "scatter", mode = "lines+markers") 
+            type = "scatter", mode = "lines+markers",
+            colors = rcartocolor::carto_pal(n = 7, name = "Vivid")) 
 }
 
 # Carte trafic + localisation aéroport 
