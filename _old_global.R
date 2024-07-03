@@ -7,13 +7,16 @@ library(plotly)
 library(gt)
 library(shiny)
 library(bslib)
-library(arrow)
 
 # Paramètres ----
 
 # ils demandent une palette de trois couleurs, j'aime pas le simple green/blue/red tho 
 # pour les marqueurs d'aéroport 
 palette <- c("green", "blue", "red")
+
+
+YEARS_LIST <- 2018:2022
+MONTHS_LIST = 1:12
 
 
 # 1) on importe les fonctions créées dans les scripts ----
@@ -26,17 +29,13 @@ source('R/tables.R')
 
 # 2) on importe les données ----
 
-## les sources ont changé depuis le Funathon, les tables
-## passagers, compagnies et liaisons sont maintenant au format
-## parquet et aggrègrent toutes les années 
-
 ## liste de tous les liens, à partir de sources.yml
 urls <- yaml::read_yaml("sources.yml")
 
 ## on importe les données airports, compagnies et liaisons 
-pax_apt_all <- import_data(urls$airports)
-pax_cie_all <- import_data(urls$compagnies)
-pax_lsn_all <- import_data(urls$liaisons)
+pax_apt_all <- map(urls$airports, import_data) %>% list_rbind()
+pax_cie_all <- map(urls$compagnies, import_data) %>% list_rbind()
+pax_lsn_all <- map(urls$liaisons, import_data) %>% list_rbind()
 
 ## on importe les localisations des aéroports
 airports_location <- st_read(urls$geojson$airport)
@@ -69,14 +68,7 @@ trafic_aeroports <- pax_apt_all %>%
          couleur = palette[volume], .by = c(an, mois)) 
 
 
-# min et max des années et mois
-dt_deb <- min(ym(trafic_aeroports$anmois))
-dt_fin <- max(ym(trafic_aeroports$anmois))
-
-YEARS_LIST <- sort(unique(trafic_aeroports$an))
-MONTHS_LIST <- 1:12
-
 # 4) les inputs du cadre "Fréquentation d'un aéroport" ----
 liste_aeroports <- unique(trafic_aeroports$code_iata)
-default_airport <- liste_aeroports[1] 
+default_airport <- liste_aeroports[1] # MAYOTTE
 
