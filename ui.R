@@ -78,7 +78,38 @@ ui <- page_navbar(
   ),
   
   # onglet "Liaisons" -- vide
-  nav_panel("Liaisons"),
+  nav_panel("Liaisons",
+            layout_columns(
+              fill = FALSE,
+              value_box(
+                title = "Liaison la plus longue",
+                value = "boîte !",
+                theme = "text-pink",
+                showcase = bsicons::bs_icon("airplane")
+              ),
+              value_box(
+                title = "Jolie boîte, couleur inverse",
+                value = "boîte !",
+                theme = "pink",
+                showcase = bsicons::bs_icon("airplane")
+              )
+            ),
+            accordion(
+              open = c("Bill Length", "About"),
+              accordion_panel(
+                "Bill Length",
+                plotOutput("bill_length")
+              ),
+              accordion_panel(
+                "Bill Depth",
+                plotOutput("bill_depth")
+              ),
+              accordion_panel(
+                "Body Mass",
+                plotOutput("body_mass")
+              )
+            )
+  ),
   
   # onglet "Compagnies" -- vide
   nav_panel("Compagnies")
